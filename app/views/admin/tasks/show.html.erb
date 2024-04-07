@@ -1,0 +1,39 @@
+<div class="container mt-4">
+  <p id="notice" class="alert alert-info"><%= notice %></p>
+
+  <h2 class="mb-4">Task Details</h2>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title"><%= @task.title %></h5>
+      <h6 class="card-subtitle mb-2 text-muted">Due Date: <%= @task.due_date || 'Not specified' %></h6>
+      <p class="card-text"><strong>Description:</strong> <%= @task.description %></p>
+
+      <p class="card-text">
+        <strong>Assigned To:</strong>
+        <%= @task.user ? @task.user.name : 'Unassigned' %>
+      </p>
+
+      <p class="card-text">
+        <strong>Status:</strong>
+        <span class="badge <%= @task.solved ? 'bg-success' : 'bg-danger' %>">
+          <%= @task.solved ? 'Completed' : 'Pending' %>
+        </span>
+      </p>
+
+      <% if @task.child_tasks.any? %>
+        <div>
+          <strong>Dependent Tasks:</strong>
+          <ul>
+            <% @task.child_tasks.each do |child| %>
+              <li><%= child.title %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= link_to 'Edit', edit_admin_task_path(@task), class: 'btn btn-primary' %>
+      <%= link_to 'Back to List', admin_tasks_path, class: 'btn btn-secondary' %>
+    </div>
+  </div>
+</div>

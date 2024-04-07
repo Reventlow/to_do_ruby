@@ -1,0 +1,1 @@
+pin "bootstrap", to: "bootstrap/dist/js/bootstrap.bundle.min.js"

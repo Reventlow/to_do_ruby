@@ -1,0 +1,54 @@
+<%= form_with(model: [:admin, task], local: true, html: { class: 'needs-validation', novalidate: true }) do |form| %>
+  <% if task.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger" role="alert">
+      <h2><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
+      <ul>
+        <% task.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, class: 'form-label' %>
+    <%= form.text_field :title, id: 'task_title', class: 'form-control', placeholder: "Title" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: 'form-label' %>
+    <%= form.text_area :description, id: 'task_description', class: 'form-control', rows: 3, placeholder: "Description" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :user_id, 'Assigned to', class: 'form-label' %>
+    <%= form.collection_select :user_id, User.all, :id, :name, { include_blank: true }, { id: 'task_user_id', class: 'form-select' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :child_task_ids, 'Dependent Tasks', class: 'form-label' %>
+    <% Task.where.not(id: task.id).where(solved: false).each do |available_task| %>
+      <div class="form-check">
+        <%= form.check_box :child_task_ids, { multiple: true, class: 'form-check-input', id: "child_task_ids_#{available_task.id}" }, available_task.id, nil %>
+        <%= label_tag "child_task_ids_#{available_task.id}", available_task.title, class: 'form-check-label' %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted">Select tasks that this task depends on. Only non-completed tasks are listed.</small>
+  </div>
+
+
+  <div class="mb-3">
+    <%= form.label :due_date, class: 'form-label' %>
+    <%= form.date_field :due_date, id: 'task_due_date', class: 'form-control' %>
+  </div>
+
+  <div class="mb-3 form-check">
+    <%= form.check_box :solved, id: 'task_solved', class: 'form-check-input' %>
+    <%= form.label :solved, class: 'form-check-label' %>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <%= form.submit 'Create Task', class: 'btn btn-primary' %>
+    <%= link_to 'Back', admin_tasks_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>
