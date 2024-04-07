@@ -20,19 +20,23 @@
     <%= form.text_area :description, id: 'task_description', class: 'form-control', rows: 3, placeholder: "Description" %>
   </div>
 
-  <div class="mb-3">
-    <%= form.label :user_id, 'Assigned to', class: 'form-label' %>
-    <%= form.collection_select :user_id, User.all, :id, :name, { include_blank: true }, { id: 'task_user_id', class: 'form-select' } %>
-  </div>
+  <% User.order(:name).each do |user| %>
+    <div class="form-check">
+      <%= check_box_tag "task[user_ids][]", user.id, @task.users.include?(user), id: dom_id(user) %>
+      <%= label_tag dom_id(user), user.name, class: 'form-check-label' %>
+    </div>
+  <% end %>
+
 
   <div class="mb-3">
     <%= form.label :child_task_ids, 'Dependent Tasks', class: 'form-label' %>
-    <% Task.where.not(id: task.id).where(solved: false).each do |available_task| %>
+    <% Task.where.not(id: task.id).order(:title).each do |available_task| %>
       <div class="form-check">
-        <%= form.check_box :child_task_ids, { multiple: true, class: 'form-check-input', id: "child_task_ids_#{available_task.id}" }, available_task.id, nil %>
-        <%= label_tag "child_task_ids_#{available_task.id}", available_task.title, class: 'form-check-label' %>
+        <%= check_box_tag "task[child_task_ids][]", available_task.id, task.child_tasks.include?(available_task), id: dom_id(available_task) %>
+        <%= label_tag dom_id(available_task), available_task.title, class: 'form-check-label' %>
       </div>
     <% end %>
+
     <small class="form-text text-muted">Select tasks that this task depends on. Only non-completed tasks are listed.</small>
   </div>
 
