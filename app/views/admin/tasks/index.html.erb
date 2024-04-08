@@ -6,26 +6,45 @@
   <thead>
   <tr>
     <th>Title</th>
-    <th>Description</th>
     <th>Assigned To</th>
     <th>Due Date</th>
+    <th>Dependent Tasks</th>
     <th>Solved</th>
     <th colspan="3"></th>
   </tr>
   </thead>
 
   <tbody>
-  <% @tasks.each do |task| %>
+  <% @tasks_unsolved.each do |task| %>
     <tr>
       <td><%= task.title %></td>
-      <td><%= task.description %></td>
-      <td><%= task.user.name if task.user %></td>
+      <td>
+        <% if task.users.any? %>
+          <% task.users.each do |user| %>
+            <%= button_to remove_assignee_from_task_admin_task_path(id: task.id, user_id: user.id), method: :delete, class: 'btn btn-outline-danger btn-sm', data: { confirm: 'Are you sure?' } do %>
+              <%= user.name %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-dash bi-person-dash-fill ms-1" viewBox="0 0 16 16">
+                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2H1zm6.5-5a5.5 5.5 0 0 0-4.475 8.975A1.5 1.5 0 0 0 4.5 16h7a1.5 1.5 0 0 0 1.475-1.025A5.5 5.5 0 0 0 6.5 11zM11 7a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 11 7z"/>
+              </svg>
+            <% end %>
+          <% end %>
+        <% else %>
+          Unassigned
+        <% end %>
+      </td>
       <td><%= task.due_date %></td>
+      <td>
+        <% if task.dependent_tasks.any? %>
+          <%= task.dependent_tasks.reject(&:solved).map(&:title).join(', ') %>
+        <% else %>
+          None
+        <% end %>
+      </td>
       <td>
         <%= form_with(model: [:admin, task], url: toggle_solved_admin_task_path(task), method: :patch, local: true, html: { class: 'form-inline' }) do |form| %>
           <div class="form-check form-switch">
             <%= form.check_box :solved, class: 'form-check-input', id: "solved_#{task.id}", checked: task.solved, data: { action: "change->submit" }, role: "switch" %>
-            <%= label_tag "solved_#{task.id}", task.solved ? 'Yes' : 'No', class: 'form-check-label' %>
+            <%= label_tag "solved_#{task.id}", task.solved ? 'Yes' : 'No', class: 'form-check-label' %> (<%= task.solved %>)
           </div>
         <% end %>
       </td>
@@ -34,7 +53,44 @@
       <td><%= link_to 'Delete', [:admin, task], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
     </tr>
   <% end %>
-
+  <% @tasks_solved.each do |task| %>
+    <tr class="table-secondary">
+      <td><%= task.title %></td>
+      <td>
+        <% if task.users.any? %>
+          <% task.users.each do |user| %>
+            <%= button_to remove_assignee_from_task_admin_task_path(id: task.id, user_id: user.id), method: :delete, class: 'btn btn-outline-danger btn-sm', data: { confirm: 'Are you sure?' } do %>
+              <%= user.name %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-dash bi-person-dash-fill ms-1" viewBox="0 0 16 16">
+                <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2H1zm6.5-5a5.5 5.5 0 0 0-4.475 8.975A1.5 1.5 0 0 0 4.5 16h7a1.5 1.5 0 0 0 1.475-1.025A5.5 5.5 0 0 0 6.5 11zM11 7a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 11 7z"/>
+              </svg>
+            <% end %>
+          <% end %>
+        <% else %>
+          Unassigned
+        <% end %>
+      </td>
+      <td><%= task.due_date %></td>
+      <td>
+        <% if task.dependent_tasks.any? %>
+          <%= task.dependent_tasks.reject(&:solved).map(&:title).join(', ') %>
+        <% else %>
+          None
+        <% end %>
+      </td>
+      <td>
+        <%= form_with(model: [:admin, task], url: toggle_solved_admin_task_path(task), method: :patch, local: true, html: { class: 'form-inline' }) do |form| %>
+          <div class="form-check form-switch">
+            <%= form.check_box :solved, class: 'form-check-input', id: "solved_#{task.id}", checked: task.solved, data: { action: "change->submit" }, role: "switch" %>
+            <%= label_tag "solved_#{task.id}", task.solved ? 'Yes' : 'No', class: 'form-check-label' %> (<%= task.solved %>)
+          </div>
+        <% end %>
+      </td>
+      <td><%= link_to 'Show', [:admin, task], class: 'btn btn-info btn-sm' %></td>
+      <td><%= link_to 'Edit', edit_admin_task_path(task), class: 'btn btn-primary btn-sm' %></td>
+      <td><%= link_to 'Delete', [:admin, task], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %></td>
+    </tr>
+  <% end %>
   </tbody>
 </table>
 

@@ -52,6 +52,9 @@ gem 'cssbundling-rails'
 # Add CanCanCan for must rebust authentication
 gem 'cancancan', '~> 3.3'
 
+# Add webpacker for bundling JavaScript
+# gem 'webpacker'
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 

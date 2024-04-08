@@ -1,9 +1,10 @@
 class Admin::TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_solved]
+  before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_solved, :remove_assignee]
 
   # GET /admin/tasks
   def index
-    @tasks = Task.all
+    @tasks_unsolved = Task.where(solved: false).order(:due_date).includes(:child_tasks)
+    @tasks_solved = Task.where(solved: true).order(:due_date).includes(:child_tasks)
   end
 
   # GET /admin/tasks/:id
@@ -44,6 +45,7 @@ class Admin::TasksController < ApplicationController
     redirect_to admin_tasks_url, notice: 'Task was successfully destroyed.'
   end
 
+  # PATCH /admin/tasks/:id/toggle_solved
   def toggle_solved
     @task.solved = !@task.solved
     if @task.save
@@ -53,15 +55,27 @@ class Admin::TasksController < ApplicationController
     end
   end
 
+  # DELETE /admin/tasks/:id/remove_assignee/:user_id
+  def remove_assignee
+    user = User.find(params[:user_id])
+    if @task.users.delete(user)
+      flash[:notice] = "#{user.name} was successfully removed from the task."
+    else
+      flash[:alert] = "There was a problem removing #{user.name} from the task."
+    end
+
+    redirect_to admin_tasks_url
+  end
+
   private
 
+  # Use callbacks to share common setup or constraints between actions.
   def set_task
     @task = Task.find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
   def task_params
-    params.require(:task).permit(:title, :description, :due_date, :solved, :parent_task_id, child_task_ids: [], user_ids: [])
+    params.require(:task).permit(:title, :description, :due_date, :solved, child_task_ids: [], user_ids: [])
   end
-
 end

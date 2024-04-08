@@ -11,7 +11,11 @@
 
       <p class="card-text">
         <strong>Assigned To:</strong>
-        <%= @task.user ? @task.user.name : 'Unassigned' %>
+        <% if @task.users.any? %>
+          <%= @task.users.map(&:name).join(', ') %>
+        <% else %>
+          Unassigned
+        <% end %>
       </p>
 
       <p class="card-text">

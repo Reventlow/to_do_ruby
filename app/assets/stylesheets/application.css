@@ -15,3 +15,6 @@
  *= require_tree .
  *= require_self
  */
+.bg-light {
+    background-color: #f8f9fa !important; /* This is Bootstrap's light gray background color */
+}
