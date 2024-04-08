@@ -1,0 +1,9 @@
+da:
+  date:
+    formats:
+      default: "%d-%m-%Y"
+      long: "%A, %d. %B %Y"
+  time:
+    formats:
+      default: "%H:%M"
+      long: "%A, %d. %B %Y, kl. %H:%M"

@@ -20,13 +20,17 @@
     <%= form.text_area :description, id: 'task_description', class: 'form-control', rows: 3, placeholder: "Description" %>
   </div>
 
+  <%= form.label :child_task_ids, 'Assigned users', class: 'form-label' %>
+
   <% User.order(:name).each do |user| %>
     <div class="form-check">
       <%= check_box_tag "task[user_ids][]", user.id, @task.users.include?(user), id: dom_id(user) %>
       <%= label_tag dom_id(user), user.name, class: 'form-check-label' %>
+
+
     </div>
   <% end %>
-
+  <div><small class="form-text text-muted">Assign this task to the following users</small></div><br>
 
   <div class="mb-3">
     <%= form.label :child_task_ids, 'Dependent Tasks', class: 'form-label' %>

@@ -1,4 +1,3 @@
-<p id="notice"><%= notice %></p>
 
 <h1>Tasks</h1>
 
@@ -32,10 +31,10 @@
           Unassigned
         <% end %>
       </td>
-      <td><%= task.due_date %></td>
+      <td><%= l(task.due_date, format: "%d-%m-%Y") if task.due_date.present? %></td>
       <td>
-        <% if task.dependent_tasks.any? %>
-          <%= task.dependent_tasks.reject(&:solved).map(&:title).join(', ') %>
+        <% if task.child_tasks.any? %>
+          <%= task.child_tasks.reject(&:solved).map(&:title).join(', ') %>
         <% else %>
           None
         <% end %>
@@ -72,8 +71,8 @@
       </td>
       <td><%= task.due_date %></td>
       <td>
-        <% if task.dependent_tasks.any? %>
-          <%= task.dependent_tasks.reject(&:solved).map(&:title).join(', ') %>
+        <% if task.child_tasks.any? %>
+          <%= task.child_tasks.reject(&:solved).map(&:title).join(', ') %>
         <% else %>
           None
         <% end %>
@@ -95,3 +94,14 @@
 </table>
 
 <%= link_to 'New Task', new_admin_task_path, class: 'btn btn-success' %>
+
+
+<%= javascript_tag do %>
+  document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.form-check-input').forEach((checkbox) => {
+  checkbox.addEventListener('change', function() {
+  this.form.submit();
+  });
+  });
+  });
+<% end %>

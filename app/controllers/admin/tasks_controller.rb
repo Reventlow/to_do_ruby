@@ -47,13 +47,15 @@ class Admin::TasksController < ApplicationController
 
   # PATCH /admin/tasks/:id/toggle_solved
   def toggle_solved
-    @task.solved = !@task.solved
-    if @task.save
-      redirect_back(fallback_location: admin_tasks_url, notice: 'Task status was successfully updated.')
-    else
-      redirect_back(fallback_location: admin_tasks_url, alert: 'There was a problem updating the task status.')
-    end
+  @task = Task.find(params[:id])
+  @task.solved = !@task.solved
+  if @task.save
+    redirect_back(fallback_location: admin_tasks_url, notice: 'Task status was successfully updated.')
+  else
+    render :edit, alert: 'There was a problem updating the task status.'
   end
+end
+
 
   # DELETE /admin/tasks/:id/remove_assignee/:user_id
   def remove_assignee
