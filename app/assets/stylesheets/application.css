@@ -18,3 +18,15 @@
 .bg-light {
     background-color: #f8f9fa !important; /* This is Bootstrap's light gray background color */
 }
+
+.logout-button {
+    border: none;
+    background: none;
+    color: rgba(0,0,0,.55);
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    color: rgba(0,0,0,.7);
+    text-decoration: none;
+}

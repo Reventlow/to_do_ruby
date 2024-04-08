@@ -52,6 +52,9 @@ gem 'cssbundling-rails'
 # Add CanCanCan for must rebust authentication
 gem 'cancancan', '~> 3.3'
 
+# Add Devise
+gem 'devise'
+
 # Add webpacker for bundling JavaScript
 # gem 'webpacker'
 

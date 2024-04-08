@@ -1,6 +1,10 @@
 <h1>Sign Up</h1>
 
-<%= form_with(model: @user, local: true, class: "needs-validation", novalidate: true) do |form| %>
+<%= form_with(model: [:admin, @user], local: true, class: "needs-validation", novalidate: true) do |form| %>
+  <div class="mb-3">
+    <%= form.label :name, class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", required: true %>
+  </div>
   <div class="mb-3">
     <%= form.label :email, class: "form-label" %>
     <%= form.email_field :email, class: "form-control", required: true %>
@@ -13,7 +17,11 @@
     <%= form.label :password_confirmation, class: "form-label" %>
     <%= form.password_field :password_confirmation, class: "form-control", required: true %>
   </div>
+  <div class="mb-3 form-check">
+    <%= form.label :admin, class: "form-check-label" %>
+    <%= form.check_box :admin, class: "form-check-input" %>
+  </div>
   <div class="mb-3">
-    <%= form.submit "Sign Up", class: "btn btn-primary" %>
+    <%= form.submit "Add User", class: "btn btn-primary" %>
   </div>
 <% end %>

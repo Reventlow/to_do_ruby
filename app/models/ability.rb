@@ -7,7 +7,10 @@ class Ability
     if user.admin?
       can :manage, :all
     else
-      can :read, :all # or whatever limited abilities you want to give to regular users
+      can :read, :all # You might want to adjust this
+      can :solve, Task do |task|
+        task.users.include?(user)
+      end
     end
   end
 end

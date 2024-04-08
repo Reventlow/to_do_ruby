@@ -7,4 +7,26 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-User.create!(email: "admin@example.com", password: "password", password_confirmation: "password", admin: true)
+# Check if the admin user already exists to avoid creating duplicates
+unless User.exists?(email: "admin@example.com")
+  User.create!(
+    email: "admin@example.com",
+    password: "password",
+    password_confirmation: "password",
+    admin: true,
+    name: "Admin"
+  )
+end
+
+# Check if the regular user already exists to avoid creating duplicates
+unless User.exists?(email: "user@example.com")
+  User.create!(
+    email: "user@example.com",
+    password: "password",
+    password_confirmation: "password",
+    admin: false,
+    name: "User"
+  )
+end
+
+puts "Seeded admin and user accounts."

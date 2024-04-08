@@ -1,5 +1,7 @@
 class Admin::TasksController < ApplicationController
+  before_action :authenticate_user! # Ensures user is logged in
   before_action :set_task, only: [:show, :edit, :update, :destroy, :toggle_solved, :remove_assignee]
+  load_and_authorize_resource except: :toggle_solved # CanCanCan
 
   # GET /admin/tasks
   def index
@@ -46,16 +48,16 @@ class Admin::TasksController < ApplicationController
   end
 
   # PATCH /admin/tasks/:id/toggle_solved
+  # This action may need to be reevaluated for non-admin roles
   def toggle_solved
-  @task = Task.find(params[:id])
-  @task.solved = !@task.solved
-  if @task.save
-    redirect_back(fallback_location: admin_tasks_url, notice: 'Task status was successfully updated.')
-  else
-    render :edit, alert: 'There was a problem updating the task status.'
+    @task = Task.find(params[:id])
+    @task.solved = !@task.solved
+    if @task.save
+      redirect_back(fallback_location: admin_tasks_url, notice: 'Task status was successfully updated.')
+    else
+      render :edit, alert: 'There was a problem updating the task status.'
+    end
   end
-end
-
 
   # DELETE /admin/tasks/:id/remove_assignee/:user_id
   def remove_assignee
