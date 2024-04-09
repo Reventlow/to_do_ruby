@@ -18,7 +18,7 @@
 .bg-light {
     background-color: #f8f9fa !important; /* This is Bootstrap's light gray background color */
 }
-
+/* Custom styles for the navbar */
 .logout-button {
     border: none;
     background: none;
@@ -29,4 +29,26 @@
 .logout-button:hover {
     color: rgba(0,0,0,.7);
     text-decoration: none;
+}
+
+/* Links for custom authentication */
+.custom-auth-link {
+    @apply btn btn-outline-primary;
+
+display: inline-block;
+    margin-right: 10px;
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:hover {
+        color: #0056b3;
+        background-color: #e9ecef;
+        border-color: #0056b3;
+        text-decoration: none;
+    }
 }

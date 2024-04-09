@@ -34,12 +34,39 @@ class Admin::TasksController < ApplicationController
 
   # PATCH/PUT /admin/tasks/:id
   def update
-    if @task.update(task_params)
-      redirect_to admin_task_path(@task), notice: 'Task was successfully updated.'
-    else
-      render :edit
+    # Safely handle the possibility of no child tasks being selected
+    submitted_child_task_ids = params[:task][:child_task_ids]&.reject(&:blank?)&.map(&:to_i) || []
+    existing_child_task_ids = @task.child_tasks.pluck(:id)
+
+    tasks_to_remove = existing_child_task_ids - submitted_child_task_ids
+    tasks_to_add = submitted_child_task_ids - existing_child_task_ids
+
+    # Begin a transaction to ensure data integrity
+    ActiveRecord::Base.transaction do
+      # Remove unselected child tasks
+      @task.child_tasks.where(id: tasks_to_remove).each do |child|
+        child.update(parent_task_id: nil)
+      end
+
+      # Add newly selected child tasks
+      Task.where(id: tasks_to_add).each do |child|
+        child.update(parent_task_id: @task.id)
+      end
+
+      # Proceed to update the task with any other submitted attributes
+      if @task.update(task_params.except(:child_task_ids))
+        redirect_to admin_task_path(@task), notice: 'Task was successfully updated.'
+      else
+        render :edit
+      end
     end
+  rescue => e
+    # Log the error or handle it as you see fit
+    logger.error "Error updating task: #{e.message}"
+    render :edit, alert: 'There was a problem updating the task.'
   end
+
+
 
   # DELETE /admin/tasks/:id
   def destroy
@@ -48,9 +75,7 @@ class Admin::TasksController < ApplicationController
   end
 
   # PATCH /admin/tasks/:id/toggle_solved
-  # This action may need to be reevaluated for non-admin roles
   def toggle_solved
-    @task = Task.find(params[:id])
     @task.solved = !@task.solved
     if @task.save
       redirect_back(fallback_location: admin_tasks_url, notice: 'Task status was successfully updated.')
@@ -67,7 +92,6 @@ class Admin::TasksController < ApplicationController
     else
       flash[:alert] = "There was a problem removing #{user.name} from the task."
     end
-
     redirect_to admin_tasks_url
   end
 
@@ -80,6 +104,8 @@ class Admin::TasksController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def task_params
-    params.require(:task).permit(:title, :description, :due_date, :solved, child_task_ids: [], user_ids: [])
+    params.require(:task).permit(:title, :description, :due_date, :solved, user_ids: []).tap do |whitelisted|
+      whitelisted[:child_task_ids] = params[:task][:child_task_ids] || []
+    end
   end
 end

@@ -34,16 +34,21 @@
       <td><%= l(task.due_date, format: "%d-%m-%Y") if task.due_date.present? %></td>
       <td>
         <% if task.child_tasks.any? %>
-          <%= task.child_tasks.reject(&:solved).map(&:title).join(', ') %>
+          <ul>
+            <% task.child_tasks.reject(&:solved).each do |child_task| %>
+              <li><%= child_task.title %></li>
+            <% end %>
+          </ul>
         <% else %>
           None
         <% end %>
       </td>
+
       <td>
         <%= form_with(model: [:admin, task], url: toggle_solved_admin_task_path(task), method: :patch, local: true, html: { class: 'form-inline' }) do |form| %>
           <div class="form-check form-switch">
             <%= form.check_box :solved, class: 'form-check-input', id: "solved_#{task.id}", checked: task.solved, data: { action: "change->submit" }, role: "switch" %>
-            <%= label_tag "solved_#{task.id}", task.solved ? 'Yes' : 'No', class: 'form-check-label' %> (<%= task.solved %>)
+            <%= label_tag "solved_#{task.id}", task.solved ? 'Yes' : 'No', class: 'form-check-label' %>
           </div>
         <% end %>
       </td>

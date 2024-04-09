@@ -3,9 +3,15 @@
 
 This README documents the necessary steps to get the application up and running.
 
+This project serves as a foundational exploration into Ruby on Rails, illustrating the initial steps of creating a functional web application. Upon completion, I plan to rebuild the application, documenting the development process in Danish on this website: https://publish.obsidian.md/reventlow, to provide a step-by-step guide on its construction.
+
+The application is designed as a task management platform, enabling the creation of tasks with dependencies and the assignment of these tasks to different users.
+
+Utilizing simple Bootstrap components for the frontend, the site maintains a straightforward and user-friendly interface.
+
+It distinguishes between two user roles: administrators and regular users, employing Devise and CanCanCan for managing authentication and authorizing access to various sections of the site.
+
 Please note I am still working on this and there are some issues
-- Rails UJS not loading correctly
-- Sessions are not handle correctly
 - I want to seed some example tasks
 - Use bootstrap on my login pages
 - CI/CD actions for auto deployment with docker
